@@ -1,48 +1,60 @@
 import enum
+import json
 import logging
+import sys
+import datetime
 
 
-class Mode(enum.Enum):
-    DEBUG = 10
-    INFO = 20
-    WARN = 30
-    ERROR = 40
-    FATAL = 50
+class Level(enum.Enum):
+    DEBUG = "debug"
+    INFO = "info"
+    WARN = "warn"
+    ERROR = "error"
+    FATAL = "fatal"
 
 
 class LogEntry:
-    def __init__(self, mode: Mode):
-        self.mode = mode
+    def __init__(self, mode: Level):
+        self.level = mode
+        self.fields = {}
 
     def msg(self, message: str):
-        match self.mode:
-            case Mode.DEBUG:
-                logging.debug(message)
-            case Mode.INFO:
-                logging.info(message)
-            case Mode.WARN:
-                logging.warn(message)
-            case Mode.ERROR:
-                logging.error(message)
-            case Mode.FATAL:
-                logging.fatal(message)
+        self.fields["message"] = message
+        self.fields["level"] = self.level.value
+        self.fields["timestamp"] = datetime.datetime.now().isoformat()
+        result = json.dumps(self.fields)
+
+        match self.level:
+            case Level.DEBUG:
+                logging.debug(result)
+            case Level.INFO:
+                logging.info(result)
+            case Level.WARN:
+                logging.warn(result)
+            case Level.ERROR:
+                logging.error(result)
+            case Level.FATAL:
+                logging.fatal(result)
 
 
 class Logger:
+    def __init__(self):
+        logging.StreamHandler(sys.stderr)
+
     def debug(self) -> LogEntry:
-        return LogEntry(mode=Mode.DEBUG)
+        return LogEntry(mode=Level.DEBUG)
 
     def info(self) -> LogEntry:
-        return LogEntry(mode=Mode.INFO)
+        return LogEntry(mode=Level.INFO)
 
     def warn(self) -> LogEntry:
-        return LogEntry(mode=Mode.WARN)
+        return LogEntry(mode=Level.WARN)
 
     def error(self) -> LogEntry:
-        return LogEntry(mode=Mode.ERROR)
+        return LogEntry(mode=Level.ERROR)
 
     def fatal(self) -> LogEntry:
-        return LogEntry(mode=Mode.FATAL)
+        return LogEntry(mode=Level.FATAL)
 
 
 logger = Logger()
