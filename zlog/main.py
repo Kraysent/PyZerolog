@@ -39,6 +39,7 @@ class LogEntry:
 
 class Logger:
     def __init__(self):
+        logging.basicConfig(level=logging.INFO, format="%(message)s")
         logging.StreamHandler(sys.stderr)
 
     def debug(self) -> LogEntry:
