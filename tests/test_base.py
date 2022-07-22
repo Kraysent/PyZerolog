@@ -11,7 +11,7 @@ from zlog import logger
 class TestBaseModes(unittest.TestCase):
     def setUp(self):
         output_stream = io.StringIO()
-        sys.stdout = output_stream
+        logger.output_stream = output_stream
         self.output_stream = output_stream
 
     def sample_input(self) -> str:

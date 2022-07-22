@@ -1,7 +1,10 @@
 import enum
-import json
 import datetime
-from typing import Any
+import sys
+from typing import IO
+from zlog.fields import BoolField, Field, FloatField, IntField, StringField
+
+from zlog.formatters import JSONFormatter
 
 
 class Level(enum.Enum):
@@ -23,32 +26,39 @@ class Level(enum.Enum):
 
 
 class LogEvent:
-    def __init__(self, mode: Level, prettify: bool = False, enabled: bool = True):
+    def __init__(
+        self,
+        mode: Level,
+        enabled: bool = True,
+        output_stream: IO = sys.stdout,
+        formatter=JSONFormatter(),
+    ):
         self.level = mode
-        self.prettify = prettify
         self.enabled = enabled
         self.fields = {}
+        self.output_stream = output_stream
+        self.formatter = formatter
 
-    def _add_custom_field(self, key: str, value: Any):
+    def _add_custom_field(self, key: str, value: Field):
         if "fields" not in self.fields:
             self.fields["fields"] = {}
 
-        self.fields["fields"][key] = value
+        self.fields["fields"][key] = value.log()
 
     def string(self, key: str, value: str) -> "LogEvent":
-        self._add_custom_field(key, value)
+        self._add_custom_field(key, StringField(value))
         return self
 
     def int(self, key: str, value: int) -> "LogEvent":
-        self._add_custom_field(key, value)
+        self._add_custom_field(key, IntField(value))
         return self
 
     def float(self, key: str, value: float) -> "LogEvent":
-        self._add_custom_field(key, value)
+        self._add_custom_field(key, FloatField(value))
         return self
 
     def bool(self, key: str, value: bool) -> "LogEvent":
-        self._add_custom_field(key, value)
+        self._add_custom_field(key, BoolField(value))
         return self
 
     def send(self):
@@ -58,21 +68,10 @@ class LogEvent:
         self.fields["level"] = self.level.to_string()
         self.fields["timestamp"] = datetime.datetime.now().isoformat()
 
-        result = json.dumps(
-            self.fields, sort_keys=True, indent=2 if self.prettify else None
-        )
+        result = self.formatter.format(self.fields)
 
-        match self.level:
-            case Level.DEBUG:
-                print(result)
-            case Level.INFO:
-                print(result)
-            case Level.WARN:
-                print(result)
-            case Level.ERROR:
-                print(result)
-            case Level.FATAL:
-                print(result)
+        self.output_stream.write(result)
+        self.output_stream.write("\n")
 
     def msg(self, message: str):
         if not self.enabled:
@@ -88,12 +87,15 @@ class Logger:
     def __init__(self):
         self.prettify = False
         self.base_level = Level.INFO
+        self.output_stream = sys.stdout
+        self.formatter = JSONFormatter(2 if self.prettify else None)
 
     def _return_log_event(self, level: Level) -> LogEvent:
         return LogEvent(
             mode=level,
-            prettify=self.prettify,
             enabled=level.value >= self.base_level.value,
+            output_stream=self.output_stream,
+            formatter=self.formatter,
         )
 
     def debug(self) -> LogEvent:
