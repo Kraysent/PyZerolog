@@ -38,7 +38,11 @@ class LogEntry:
         return self
 
     def send(self):
+        self.fields["level"] = self.level.value
+        self.fields["timestamp"] = datetime.datetime.now().isoformat()
+
         result = json.dumps(self.fields, sort_keys=True)
+
         match self.level:
             case Level.DEBUG:
                 logging.debug(result)
@@ -55,8 +59,6 @@ class LogEntry:
         if message != "":
             self.fields["message"] = message
 
-        self.fields["level"] = self.level.value
-        self.fields["timestamp"] = datetime.datetime.now().isoformat()
         self.send()
 
 
