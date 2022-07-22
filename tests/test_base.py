@@ -2,24 +2,18 @@ from datetime import datetime
 import json
 import unittest
 import unittest.mock as mock
+from tests.root import DatetimeMock
 from zlog import logger
 
 
-class DatetimeMock:
-    @classmethod
-    def now(cls) -> 'DatetimeMock':
-        return datetime(2001, 1, 1, 12, 0, 0)
-
-    def isoformat(self) -> str:
-        return "2001-01-01T12:00:00"
-
 class TestBaseModes(unittest.TestCase):
-    def sample_input(self):
+    def sample_input(self) -> str:
         return "hello"
 
-    def sample_result(self, level: str):
+    def sample_result(self, level: str) -> str:
         return json.dumps(
-            {"message": "hello", "level": level, "timestamp": "2001-01-01T12:00:00"}
+            {"message": "hello", "level": level, "timestamp": "2001-01-01T12:00:00"},
+            sort_keys=True,
         )
 
     @mock.patch("zlog.main.logging")

@@ -3,6 +3,7 @@ import json
 import logging
 import sys
 import datetime
+from typing import Any
 
 
 class Level(enum.Enum):
@@ -18,12 +19,26 @@ class LogEntry:
         self.level = mode
         self.fields = {}
 
-    def msg(self, message: str):
-        self.fields["message"] = message
-        self.fields["level"] = self.level.value
-        self.fields["timestamp"] = datetime.datetime.now().isoformat()
-        result = json.dumps(self.fields)
+    def _add_custom_field(self, key: str, value: Any):
+        if "fields" not in self.fields:
+            self.fields["fields"] = {}
 
+        self.fields["fields"][key] = value
+
+    def string(self, key: str, value: str) -> "LogEntry":
+        self._add_custom_field(key, value)
+        return self
+
+    def int(self, key: str, value: int) -> "LogEntry":
+        self._add_custom_field(key, value)
+        return self
+
+    def float(self, key: str, value: float) -> "LogEntry":
+        self._add_custom_field(key, value)
+        return self
+
+    def send(self):
+        result = json.dumps(self.fields, sort_keys=True)
         match self.level:
             case Level.DEBUG:
                 logging.debug(result)
@@ -35,6 +50,14 @@ class LogEntry:
                 logging.error(result)
             case Level.FATAL:
                 logging.fatal(result)
+
+    def msg(self, message: str):
+        if message != "":
+            self.fields["message"] = message
+
+        self.fields["level"] = self.level.value
+        self.fields["timestamp"] = datetime.datetime.now().isoformat()
+        self.send()
 
 
 class Logger:
