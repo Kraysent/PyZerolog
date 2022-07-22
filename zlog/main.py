@@ -1,28 +1,9 @@
-import enum
 import datetime
 import sys
 from typing import IO
 from zlog.fields import BoolField, Field, FloatField, IntField, StringField
-
 from zlog.formatters import JSONFormatter
-
-
-class Level(enum.Enum):
-    DEBUG = 10
-    INFO = 20
-    WARN = 30
-    ERROR = 40
-    FATAL = 50
-
-    def to_string(self):
-        d = {
-            Level.DEBUG: "debug",
-            Level.INFO: "info",
-            Level.WARN: "warn",
-            Level.ERROR: "error",
-            Level.FATAL: "fatal",
-        }
-        return d.get(self, "info")
+from zlog.level import Level
 
 
 class LogEvent:
@@ -61,12 +42,16 @@ class LogEvent:
         self._add_custom_field(key, BoolField(value))
         return self
 
+    def field(self, key: str, value: Field) -> "LogEvent":
+        self._add_custom_field(key, value)
+        return self
+
     def send(self):
         if not self.enabled:
             return
 
-        self.fields["level"] = self.level.to_string()
-        self.fields["timestamp"] = datetime.datetime.now().isoformat()
+        self.fields["level"] = self.level
+        self.fields["timestamp"] = datetime.datetime.now()
 
         result = self.formatter.format(self.fields)
 
