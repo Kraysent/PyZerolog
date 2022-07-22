@@ -1,6 +1,5 @@
 import io
 import json
-import sys
 import unittest
 from unittest import mock
 

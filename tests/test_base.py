@@ -1,7 +1,5 @@
-from datetime import datetime
 import io
 import json
-import sys
 import unittest
 import unittest.mock as mock
 from tests.root import DatetimeMock
