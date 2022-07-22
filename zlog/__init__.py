@@ -1,1 +1,1 @@
-from zlog.main import logger
+from zlog.main import logger, Logger, Level
