@@ -1,6 +1,6 @@
 import datetime
 import sys
-from typing import IO
+from typing import IO, Any
 from zlog.fields import (
     BoolField,
     ExceptionField,
@@ -9,6 +9,7 @@ from zlog.fields import (
     IntField,
     ListField,
     StringField,
+    DictField,
 )
 from zlog.formatters import Formatter, JSONFormatter
 from zlog.level import Level
@@ -60,6 +61,9 @@ class LogEvent:
     def exception(self, key: str, value: Exception) -> "LogEvent":
         return self.field(key, ExceptionField(value))
 
+    def dict(self, key: str, value: dict[str, Any]) -> "LogEvent":
+        return self.field(key, DictField(value))
+
     def send(self):
         if not self.enabled:
             return
@@ -69,8 +73,7 @@ class LogEvent:
 
         for formatted_stream in self.formatted_streams:
             result = formatted_stream.format(self.fields)
-            formatted_stream.write(result)
-            formatted_stream.write("\n")
+            formatted_stream.write(f"{result}\n")
 
     def msg(self, message: str):
         if not self.enabled:

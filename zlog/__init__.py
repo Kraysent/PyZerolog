@@ -8,5 +8,6 @@ from zlog.fields import (
     BoolField,
     ListField,
     ExceptionField,
+    DictField,
 )
 from zlog.level import Level

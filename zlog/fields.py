@@ -50,6 +50,14 @@ class ListField(Field):
 
 
 @dataclass
+class DictField(Field):
+    value: dict[str, Any]
+
+    def log(self) -> dict[str, Any]:
+        return self.value
+
+
+@dataclass
 class ExceptionField(Field):
     value: Exception
 

@@ -1,6 +1,14 @@
 import unittest
 
-from zlog import IntField, FloatField, StringField, BoolField, ListField, ExceptionField
+from zlog import (
+    IntField,
+    FloatField,
+    StringField,
+    BoolField,
+    ListField,
+    ExceptionField,
+    DictField,
+)
 
 
 class TestFields(unittest.TestCase):
@@ -32,4 +40,9 @@ class TestFields(unittest.TestCase):
     def test_exception(self):
         actual = ExceptionField(RuntimeError("test")).log()
         expected = {"message": "test", "error": "RuntimeError"}
+        self.assertDictEqual(expected, actual)
+
+    def test_dict(self):
+        actual = DictField({"test": "value", "int": 5}).log()
+        expected = {"test": "value", "int": 5}
         self.assertDictEqual(expected, actual)
