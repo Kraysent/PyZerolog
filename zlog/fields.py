@@ -5,7 +5,7 @@ from typing import Any
 
 class Field(ABC):
     @abstractmethod
-    def log(self) -> dict[str, Any] | int | float | str:
+    def log(self) -> dict[str, Any] | list[Any] | int | float | str:
         pass
 
 
@@ -39,3 +39,19 @@ class BoolField(Field):
 
     def log(self) -> bool:
         return self.value
+
+
+@dataclass
+class ListField(Field):
+    value: list[Any]
+
+    def log(self) -> list[Any]:
+        return self.value
+
+
+@dataclass
+class ExceptionField(Field):
+    value: Exception
+
+    def log(self) -> dict[str, str]:
+        return {"message": str(self.value), "error": type(self.value).__name__}
