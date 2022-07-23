@@ -25,3 +25,21 @@ class Level(enum.Enum):
             Level.ERROR: "err",
             Level.FATAL: "ftl",
         }.get(self, "inf")
+
+    def from_string(self):
+        return {
+            "debug": Level.DEBUG,
+            "info": Level.INFO,
+            "warn": Level.WARN,
+            "error": Level.ERROR,
+            "fatal": Level.FATAL,
+        }.get(self, Level.INFO)
+
+    def from_short_string(self):
+        return {
+            "dbg": Level.DEBUG,
+            "inf": Level.INFO,
+            "wrn": Level.WARN,
+            "err": Level.ERROR,
+            "ftl": Level.FATAL,
+        }.get(self, Level.INFO)

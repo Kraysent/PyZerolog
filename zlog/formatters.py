@@ -68,9 +68,10 @@ class ConsoleFormatter(Formatter):
 
         msg = data.get("message", "")
         if msg != "":
-            result += f" {msg} "
+            result += f" {msg}"
 
         if self.coloring:
+            # Don't use f-strings because they clear out colors for some reason
             fields = [
                 Color.apply(key, Color.YELLOW) + "=" + str(value)
                 for key, value in data.get("fields", {}).items()
@@ -81,6 +82,7 @@ class ConsoleFormatter(Formatter):
             ]
 
         if fields != []:
+            result += " "
             result += " ".join(fields)
 
         return result

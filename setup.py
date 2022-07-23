@@ -2,7 +2,7 @@ from setuptools import setup
 
 setup(
     name="pyzerolog",
-    version="0.1.1",
+    version="0.2.0",
     author="Kraysent",
     description="Package that makes typed logging convinient.",
     license="MIT License",
