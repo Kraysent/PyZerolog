@@ -50,11 +50,11 @@ class LogEvent:
     def int(self, key: str, value: int) -> "LogEvent":
         return self.field(key, IntField(value))
 
-    def float(self, key: str, value: float) -> "LogEvent":
-        return self.field(key, FloatField(value))
+    def float(self, key: str, value: float, **kwargs) -> "LogEvent":
+        return self.field(key, FloatField(value, **kwargs))
 
-    def measured_float(self, key: str, value: float, unit: str) -> "LogEvent":
-        return self.field(key, MeasuredFloatField(value, unit))
+    def measured_float(self, key: str, value: float, unit: str, **kwargs) -> "LogEvent":
+        return self.field(key, MeasuredFloatField(value, unit, **kwargs))
 
     def bool(self, key: str, value: bool) -> "LogEvent":
         return self.field(key, BoolField(value))

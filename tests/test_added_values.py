@@ -57,10 +57,19 @@ class TestCustomValues(unittest.TestCase):
 
     @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
     def test_float(self):
-        logger.info().string("test", 5.2).msg(self.sample_input())
+        logger.info().float("test", 5.2).msg(self.sample_input())
 
         expected = self.sample_result("info")
         expected["fields"]["test"] = 5.2
+        expected = f"{json.dumps(expected, sort_keys=True)}\n"
+        self.assertEqual(self.output_stream.getvalue(), expected)
+
+    @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
+    def test_float_rounded(self):
+        logger.info().float("test", 8.83333333333, decimals=2).msg(self.sample_input())
+
+        expected = self.sample_result("info")
+        expected["fields"]["test"] = 8.83
         expected = f"{json.dumps(expected, sort_keys=True)}\n"
         self.assertEqual(self.output_stream.getvalue(), expected)
 
@@ -70,6 +79,17 @@ class TestCustomValues(unittest.TestCase):
 
         expected = self.sample_result("info")
         expected["fields"]["test"] = "5.2 s"
+        expected = f"{json.dumps(expected, sort_keys=True)}\n"
+        self.assertEqual(self.output_stream.getvalue(), expected)
+
+    @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
+    def test_measured_float_rounded(self):
+        logger.info().measured_float("test", 8.83333333333, "s", decimals=2).msg(
+            self.sample_input()
+        )
+
+        expected = self.sample_result("info")
+        expected["fields"]["test"] = "8.83 s"
         expected = f"{json.dumps(expected, sort_keys=True)}\n"
         self.assertEqual(self.output_stream.getvalue(), expected)
 

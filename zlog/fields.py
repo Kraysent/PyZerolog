@@ -21,8 +21,15 @@ class IntField(Field):
 class FloatField(Field):
     value: float
 
+    def __init__(self, value: float, decimals: int | None = None):
+        self.value = value
+        self.decimals = decimals
+
     def log(self) -> float:
-        return self.value
+        if self.decimals is not None:
+            return round(self.value, self.decimals)
+        else:
+            return self.value
 
 
 @dataclass
@@ -30,8 +37,16 @@ class MeasuredFloatField(Field):
     value: float
     unit: str
 
+    def __init__(self, value: float, unit: str, decimals: int | None = None):
+        self.value = value
+        self.unit = unit
+        self.decimals = decimals
+
     def log(self) -> str:
-        return f"{self.value} {self.unit}"
+        if self.decimals is not None:
+            return f"{round(self.value, self.decimals)} {self.unit}"
+        else:
+            return f"{self.value} {self.unit}"
 
 
 @dataclass
