@@ -11,19 +11,19 @@ class TestConsoleFormatter(unittest.TestCase):
         return formatter.format(input)
 
     def test_empty(self):
-        formatter = ConsoleFormatter()
+        formatter = ConsoleFormatter(coloring=False)
         actual = self.get_actual(formatter, {})
         expected = "12:00 INF"
         self.assertEqual(expected, actual)
 
     def test_one_entry(self):
-        formatter = ConsoleFormatter()
+        formatter = ConsoleFormatter(coloring=False)
         actual = self.get_actual(formatter, {"fields": {"test_key": "test value"}})
         expected = "12:00 INF test_key=test value"
         self.assertEqual(expected, actual)
 
     def test_two_entries(self):
-        formatter = ConsoleFormatter()
+        formatter = ConsoleFormatter(coloring=False)
         actual = self.get_actual(
             formatter,
             {"fields": {"test_key1": "test value 1", "test_key2": "test value 2"}},
