@@ -3,6 +3,7 @@ import unittest
 from zlog import (
     IntField,
     FloatField,
+    MeasuredFloatField,
     StringField,
     BoolField,
     ListField,
@@ -20,6 +21,11 @@ class TestFields(unittest.TestCase):
     def test_float(self):
         actual = FloatField(5.5).log()
         expected = 5.5
+        self.assertEqual(expected, actual)
+
+    def test_measured_float(self):
+        actual = MeasuredFloatField(5.5, "s").log()
+        expected = "5.5 s"
         self.assertEqual(expected, actual)
 
     def test_string(self):

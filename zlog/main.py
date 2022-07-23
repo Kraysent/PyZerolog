@@ -8,6 +8,7 @@ from zlog.fields import (
     FloatField,
     IntField,
     ListField,
+    MeasuredFloatField,
     StringField,
     DictField,
 )
@@ -51,6 +52,9 @@ class LogEvent:
 
     def float(self, key: str, value: float) -> "LogEvent":
         return self.field(key, FloatField(value))
+
+    def measured_float(self, key: str, value: float, unit: str) -> "LogEvent":
+        return self.field(key, MeasuredFloatField(value, unit))
 
     def bool(self, key: str, value: bool) -> "LogEvent":
         return self.field(key, BoolField(value))

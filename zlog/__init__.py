@@ -4,6 +4,7 @@ from zlog.fields import (
     Field,
     IntField,
     FloatField,
+    MeasuredFloatField,
     StringField,
     BoolField,
     ListField,

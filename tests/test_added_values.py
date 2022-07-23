@@ -65,11 +65,47 @@ class TestCustomValues(unittest.TestCase):
         self.assertEqual(self.output_stream.getvalue(), expected)
 
     @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
+    def test_measured_float(self):
+        logger.info().measured_float("test", 5.2, "s").msg(self.sample_input())
+
+        expected = self.sample_result("info")
+        expected["fields"]["test"] = "5.2 s"
+        expected = f"{json.dumps(expected, sort_keys=True)}\n"
+        self.assertEqual(self.output_stream.getvalue(), expected)
+
+    @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
     def test_bool(self):
         logger.info().bool("test", True).msg(self.sample_input())
 
         expected = self.sample_result("info")
         expected["fields"]["test"] = True
+        expected = f"{json.dumps(expected, sort_keys=True)}\n"
+        self.assertEqual(self.output_stream.getvalue(), expected)
+
+    @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
+    def test_list(self):
+        logger.info().list("test", [1, 2, "alice"]).msg(self.sample_input())
+
+        expected = self.sample_result("info")
+        expected["fields"]["test"] = [1, 2, "alice"]
+        expected = f"{json.dumps(expected, sort_keys=True)}\n"
+        self.assertEqual(self.output_stream.getvalue(), expected)
+
+    @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
+    def test_dict(self):
+        logger.info().dict("test", {"a": "b", "c": 8}).msg(self.sample_input())
+
+        expected = self.sample_result("info")
+        expected["fields"]["test"] = {"a": "b", "c": 8}
+        expected = f"{json.dumps(expected, sort_keys=True)}\n"
+        self.assertEqual(self.output_stream.getvalue(), expected)
+
+    @mock.patch("zlog.main.datetime.datetime", new=DatetimeMock)
+    def test_exception(self):
+        logger.info().exception("test", RuntimeError("test")).msg(self.sample_input())
+
+        expected = self.sample_result("info")
+        expected["fields"]["test"] = {"message": "test", "error": "RuntimeError"}
         expected = f"{json.dumps(expected, sort_keys=True)}\n"
         self.assertEqual(self.output_stream.getvalue(), expected)
 

@@ -26,6 +26,15 @@ class FloatField(Field):
 
 
 @dataclass
+class MeasuredFloatField(Field):
+    value: float
+    unit: str
+
+    def log(self) -> str:
+        return f"{self.value} {self.unit}"
+
+
+@dataclass
 class StringField(Field):
     value: str
 

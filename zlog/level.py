@@ -26,6 +26,7 @@ class Level(enum.Enum):
             Level.FATAL: "ftl",
         }.get(self, "inf")
 
+    @staticmethod
     def from_string(self):
         return {
             "debug": Level.DEBUG,
@@ -35,6 +36,7 @@ class Level(enum.Enum):
             "fatal": Level.FATAL,
         }.get(self, Level.INFO)
 
+    @staticmethod
     def from_short_string(self):
         return {
             "dbg": Level.DEBUG,
