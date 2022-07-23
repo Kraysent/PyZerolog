@@ -1,7 +1,15 @@
 import datetime
 import sys
 from typing import IO
-from zlog.fields import BoolField, Field, FloatField, IntField, StringField
+from zlog.fields import (
+    BoolField,
+    ExceptionField,
+    Field,
+    FloatField,
+    IntField,
+    ListField,
+    StringField,
+)
 from zlog.formatters import Formatter, JSONFormatter
 from zlog.level import Level
 
@@ -19,42 +27,38 @@ class FormattedStream:
 
 
 class LogEvent:
-    def __init__(
-        self,
-        mode: Level,
-        enabled: bool = True,
-        formatted_streams=[FormattedStream()],
-    ):
+    def __init__(self, mode: Level, enabled: bool = True, formatted_streams=None):
+        if formatted_streams is None:
+            formatted_streams = [FormattedStream()]
         self.level = mode
         self.enabled = enabled
         self.fields = {}
         self.formatted_streams = formatted_streams
 
-    def _add_custom_field(self, key: str, value: Field):
+    def field(self, key: str, value: Field) -> "LogEvent":
         if "fields" not in self.fields:
             self.fields["fields"] = {}
 
         self.fields["fields"][key] = value.log()
+        return self
 
     def string(self, key: str, value: str) -> "LogEvent":
-        self._add_custom_field(key, StringField(value))
-        return self
+        return self.field(key, StringField(value))
 
     def int(self, key: str, value: int) -> "LogEvent":
-        self._add_custom_field(key, IntField(value))
-        return self
+        return self.field(key, IntField(value))
 
     def float(self, key: str, value: float) -> "LogEvent":
-        self._add_custom_field(key, FloatField(value))
-        return self
+        return self.field(key, FloatField(value))
 
     def bool(self, key: str, value: bool) -> "LogEvent":
-        self._add_custom_field(key, BoolField(value))
-        return self
+        return self.field(key, BoolField(value))
 
-    def field(self, key: str, value: Field) -> "LogEvent":
-        self._add_custom_field(key, value)
-        return self
+    def list(self, key: str, value: list) -> "LogEvent":
+        return self.field(key, ListField(value))
+
+    def exception(self, key: str, value: Exception) -> "LogEvent":
+        return self.field(key, ExceptionField(value))
 
     def send(self):
         if not self.enabled:
@@ -85,7 +89,7 @@ class Logger:
         self.formatted_streams = [
             FormattedStream(JSONFormatter(2 if self.prettify else None), sys.stdout)
         ]
- 
+
     def _return_log_event(self, level: Level) -> LogEvent:
         return LogEvent(
             mode=level,
