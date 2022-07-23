@@ -9,9 +9,8 @@ from zlog import logger
 
 class TestCustomValues(unittest.TestCase):
     def setUp(self):
-        output_stream = io.StringIO()
-        logger.output_stream = output_stream
-        self.output_stream = output_stream
+        self.output_stream = io.StringIO()
+        logger.formatted_streams[0].stream = self.output_stream
 
     def sample_input(self) -> str:
         return "hello"
