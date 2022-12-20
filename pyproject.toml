@@ -1,0 +1,14 @@
+[project]
+name = "pyzerolog"
+description = "Package that makes typed logging convinient."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT License" }
+version = "0.4.0"
+dependencies = []
+
+[build-system]
+requires = ["setuptools", "setuptools_scm"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
